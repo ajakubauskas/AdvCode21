@@ -26,21 +26,30 @@ object part2 {
 
     println("---------------part 2-----------------")
 
-    val matches = loop2.map { s =>
-      (s, countMatches(s, gamma), countMatches(s, eps))
-    }.toList
+    val (itrOnes, itrZeros) = loop2.duplicate
+
+    var itr: Iterator[String] = filterByBit(gamma(0), 0, itrOnes)
+    var onesPattern = gamma
 
 
-    val ox = matches.maxBy(_._2)._1
 
-    println("===========")
-    matches.groupBy(_._2).mapValues(_.map(_._1).map(_.mkString)).foreach { case (k, v) =>
-      println(s"$k ${v.mkString(",")}")
+    for (idx <- 0 until len) {
+      if (itr.size == 1)
+        return
+
+      itr = filterByBit(onesPattern(idx), idx, itr)
+
+
+
+
     }
-    println("===========")
+
+    var zerosPattern = eps
+
+
+
 
     println(ox)
-    val co = matches.maxBy(_._3)._1
     println(co)
 
     val oxDec  = Integer.parseInt(ox, 2)
@@ -52,18 +61,12 @@ object part2 {
 
   }
 
-  def countMatches(string: String, pattern: Array[Char]): Int = {
-    var count = 0
-    val s = string.toCharArray
-    pattern.indices.foreach { idx =>
-      if (s(idx) == pattern(idx))
-        count += 1
-      else
-        return count
-
+  def filterByBit(bit: Char, bitPos: Int, in: Iterator[String]): Iterator[String] = {
+    in.filter { s =>
+      s(bitPos) == bit
     }
-    count
   }
+
 
   def countOnes(counter: Array[Int], bitAndIdx: (Char, Int)) = {
     bitAndIdx match {
