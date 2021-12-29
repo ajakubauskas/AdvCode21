@@ -7,14 +7,27 @@ object part2 {
 
     val src = Source.fromFile("example")
 
-    val iter = src.getLines()
+    val lines = src.getLines().toList
 
-    val (head, loop1) = iter.duplicate
-    val (lines, loop2) = loop1.duplicate
 
-    val len = head.next.length
+    val len = lines.head.length
 
-    val (gamma, eps) = frequencyPatterns(lines, len)
+    val fGamma = (count: Int, half: Int) =>
+      {
+        if (count >= half)
+          '1'
+        else
+          '0'
+      }
+    val gamma = frequencyPatterns(lines.iterator, len)(fGamma)
+
+    val fEps = { (count: Int, half: Int) =>
+      if (count < half)
+        '1'
+      else
+        '0'
+    }
+    val eps = frequencyPatterns(lines.iterator, len)(fEps)
 
 
     val g = Integer.parseInt(gamma.mkString, 2)
@@ -26,38 +39,38 @@ object part2 {
 
     println("---------------part 2-----------------")
 
-    val (itrOnes, itrZeros) = loop2.duplicate
-
-    var itr: Iterator[String] = filterByBit(gamma(0), 0, itrOnes)
+    var itr = filterByBit(gamma(0), 0, lines.iterator).toList
     var onesPattern = gamma
-
 
 
     for (idx <- 0 until len) {
       if (itr.size == 1)
         return
 
-      itr = filterByBit(onesPattern(idx), idx, itr)
+      itr = filterByBit(onesPattern(idx), idx, itr.iterator).toList
 
+      println(onesPattern.mkString)
+      println(itr)
 
-
+      onesPattern = frequencyPatterns(itr.iterator, len)(fGamma)
 
     }
 
     var zerosPattern = eps
 
 
+    val ox = itr.head
 
 
     println(ox)
-    println(co)
+//    println(co)
 
     val oxDec  = Integer.parseInt(ox, 2)
     println(oxDec)
-    val coDec  = Integer.parseInt(co, 2)
-    println(coDec)
+//    val coDec  = Integer.parseInt(co, 2)
+//    println(coDec)
 
-    println(oxDec*coDec)
+//    println(oxDec*coDec)
 
   }
 
@@ -75,7 +88,7 @@ object part2 {
     }
   }
 
-  def frequencyPatterns(itr: Iterator[String], len: Int) = {
+  def frequencyPatterns(itr: Iterator[String], len: Int)(f: (Int, Int) => Char) = {
     val counter = Array.fill(len)(0)
     var size = 0
 
@@ -86,21 +99,7 @@ object part2 {
 
     val half = size / 2
 
-    val gamma = counter.map { ct =>
-      if (ct >= half)
-        '1'
-      else
-        '0'
-    }
-
-    val eps = counter.map { ct =>
-      if (ct < half)
-        '1'
-      else
-        '0'
-    }
-
-    (gamma, eps)
+    counter.map(f(_, half))
   }
 
 }
