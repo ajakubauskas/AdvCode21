@@ -6,6 +6,7 @@ object part1 {
   def main(args: Array[String]): Unit = {
 
     val src = Source.fromFile("input.part1")
+//    val src = Source.fromFile("example")
 
     val lines = src.getLines()
 
@@ -21,16 +22,34 @@ object part1 {
 
 
 
-    for (n <- numbers) {
+//    // part 1 solution
+//    for (n <- numbers) {
+//
+//      boards.find { board =>
+//        board.enterAndCheck(n)
+//      }.foreach { board =>
+//        println(board.sumUnmarked * n)
+//        return
+//      }
+//    }
 
-      boards.find { board =>
-        board.enterAndCheck(n)
-      }.foreach { board =>
-        println(board.sumUnmarked * n)
-        return
+    // part 2
+    val entriesToWin = boards.map { board =>
+
+      numbers.foldLeft(-1) { case (acc, num) =>
+        if (board.isWinner)
+          acc
+        else {
+          board.enter(num)
+          acc + 1
+        }
       }
+
     }
 
+    val (lastWinner, idx) = (boards zip entriesToWin).maxBy(_._2)
+
+    println(lastWinner.sumUnmarked * numbers(idx))
 
 
   }
@@ -41,7 +60,7 @@ object part1 {
 
     private def winnerRow(markedRows: Array[Array[Boolean]]) = markedRows.exists(_.forall(_ == true))
 
-    private def isWinner = winnerRow(marked) || winnerRow(marked.transpose)
+    def isWinner = winnerRow(marked) || winnerRow(marked.transpose)
 
     def enter(x: Int): Unit = {
       for (i <- 0 until 5; j <- 0 until 5) {
