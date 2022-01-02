@@ -4,7 +4,7 @@ object main {
 
   def main(args: Array[String]): Unit = {
 
-    val src = Source.fromFile("example")
+    val src = Source.fromFile("input")
 
     val vents = (
       for {
@@ -21,12 +21,13 @@ object main {
 
     val g = Grid(grid)
 
-    println(g)
-
+//    println(g)
 
     println(grid.map(_.count(_ >= 2)).sum)
 
+
   }
+
 
   case class Grid(grid: Array[Array[Int]]) {
 
@@ -46,13 +47,16 @@ object main {
 
     private val onlyHorizontalOrVertical = x1 == x2 || y1 == y2
 
-    private val onlyDiagonal = math.abs(x1 - x2) == math.abs(y1 - y2)
+    private val strictlyDiagonal = math.abs(x1 - x2) == math.abs(y1 - y2)
+
+    def onDiagonal(x: Int, y: Int) = math.abs(x1 - x) == math.abs(y1 - y)
 
     def coverCoords(x: Int, y: Int) = {
       val inX = x1 <= x && x <= x2 || x2 <= x && x <= x1
       val inY =  y1 <= y && y <= y2 || y2 <= y && y <= y1
 
-      onlyHorizontalOrVertical && inX && inY
+//      onlyHorizontalOrVertical && inX && inY
+      (onlyHorizontalOrVertical || strictlyDiagonal && onDiagonal(x, y)) && inX && inY
     }
 
     def maxX = math.max(x1, x2)
