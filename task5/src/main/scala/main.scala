@@ -4,7 +4,7 @@ object main {
 
   def main(args: Array[String]): Unit = {
 
-    val src = Source.fromFile("input")
+    val src = Source.fromFile("example")
 
     val vents = (
       for {
@@ -12,7 +12,7 @@ object main {
     } yield Line.parse(lineStr)
       ).toList
 
-    val grid = Array.fill(vents.map(_.maxX).max)(Array.fill(vents.map(_.maxY).max)(0))
+    val grid = Array.fill(vents.map(_.maxX).max + 1)(Array.fill(vents.map(_.maxY).max + 1)(0))
 
     for (i <- grid.indices; j <- grid.head.indices) {
 
@@ -21,6 +21,8 @@ object main {
 
     val g = Grid(grid)
 
+    println(g)
+
 
     println(grid.map(_.count(_ >= 2)).sum)
 
@@ -28,31 +30,27 @@ object main {
 
   case class Grid(grid: Array[Array[Int]]) {
 
-
-    // not really pretty
     override def toString: String = {
-      val s = for {
-        i <- grid.indices
 
-
-      } yield {
-        grid.head.indices.map { j =>
+      grid.head.indices.map { j =>
+        grid.indices.map { i =>
           if (grid(i)(j) == 0) "." else grid(i)(j).toString
         }.mkString
-
       }.mkString("\n")
 
-      s.mkString
     }
   }
 
 
   case class Line(x1: Int, y1: Int, x2: Int, y2: Int) {
+
+    private val onlyHorizontalOrVertical = x1 == x2 || y1 == y2
+
+    private val onlyDiagonal = math.abs(x1 - x2) == math.abs(y1 - y2)
+
     def coverCoords(x: Int, y: Int) = {
       val inX = x1 <= x && x <= x2 || x2 <= x && x <= x1
       val inY =  y1 <= y && y <= y2 || y2 <= y && y <= y1
-
-      val onlyHorizontalOrVertical = x1 == x2 || y1 == y2
 
       onlyHorizontalOrVertical && inX && inY
     }
