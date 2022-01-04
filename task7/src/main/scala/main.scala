@@ -22,9 +22,9 @@ object main {
     }
 
     val minDist = distances.min
+
     println(minDist)
 
-    println(distances.indexWhere(_ == minDist) + min)
 
   }
 
