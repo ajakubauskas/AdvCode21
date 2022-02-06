@@ -11,21 +11,29 @@ object DeriveNumber {
   /*
   some possible observations we can make:
 
-  * 2 overlap with 4 in 2 chars
-  * 5 overlap with 4 in 2 chars
-  * 3 overlaps with 4 in 3 chars
-  * 2 overlap with 7 in 2 chars
-  * 5 overlap with 7 in 2 chars
-  * 3 overlaps with 4 in 3 chars
-  * 2 overlap with 1 in 1 chars
-  * 5 overlap with 1 in 1 chars
-  * 3 overlaps with 1 in 2 chars
-  * 6 overlaps with 1 in 1 chars
-  * 9 overlaps with 1 in 2 chars
-  * 6 overlaps with 4 in 3 chars
-  * 9 overlaps with 4 in 4 chars
+  * 2 overlap with 4 in 2 chars +
+  * 5 overlap with 4 in 2 chars +
+  * 3 overlaps with 4 in 3 chars +
+  * 2 overlap with 7 in 2 chars +
+  * 5 overlap with 7 in 2 chars +
+  * 2 overlap with 1 in 1 chars +
+  * 5 overlap with 1 in 1 chars +
+  * 3 overlaps with 1 in 2 chars +
+  * 6 overlaps with 1 in 1 chars +
+  * 9 overlaps with 1 in 2 chars +
+  * 6 overlaps with 7 in 2 chars +
+  * 9 overlaps with 7 in 3 chars +
+  * 6 overlaps with 4 in 3 chars +
+  * 9 overlaps with 4 in 4 chars +
 
    */
+    // both Num 2 and Num 5 share exactly 2 letter with Num 4
+    case (a: MayBe235, MustBe(s, 4)) if a.s.intersect(s).size == 2 =>
+      MayBe25(a.s) :: Nil
+
+    // both Num 2 and Num 5 share exactly 2 letter with Num 4
+    case (a: MayBe235, MustBe(s, 4)) if a.s.intersect(s).size == 3 =>
+      MustBe(a.s, 3) :: Nil
 
     // Num 3 shares exactly 2 letters with a Num 1
     case (a: MayBe235, MustBe(s, 1)) if a.s.intersect(s).size == 2 =>
@@ -77,6 +85,10 @@ object DeriveNumber {
 
     case _ => Nil
 
+  }
+
+  def deriveFromMayBe: (MayBe, Iterable[Known]) => Seq[Signal] = { case (maybe, knowns) =>
+    knowns.flatMap(derive(maybe, _)).toSeq
   }
 
 //  def derive: (Known, MayBe) => Seq[Number] = { (known, maybe) =>
