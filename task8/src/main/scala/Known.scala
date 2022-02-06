@@ -1,7 +1,7 @@
 
-trait Number
+trait Signal
 
-trait Known extends Number
+trait Known extends Signal
 case class MustBe(s: Set[Char], num: Int) extends Known {
 
 }
@@ -28,7 +28,20 @@ case class VLeftTop(c: Char) extends Position
 case class VLeftBottom(c: Char) extends Position
 
 
-trait MayBe extends Number
+trait MayBe extends Signal
 case class MayBe235(s: Set[Char]) extends MayBe
 case class MayBe25(s: Set[Char]) extends MayBe
 case class MayBe69(s: Set[Char]) extends MayBe
+
+object MayBe {
+  def parse(s: String): Option[MayBe] =
+    s.length match {
+      case 5 => Some(MayBe235(s.toSet))
+      case 6 => Some(MayBe69(s.toSet))
+      case _ => None
+    }
+}
+
+object Signal {
+  def parse(s: String) = MustBe.parse(s) orElse MayBe.parse(s)
+}
